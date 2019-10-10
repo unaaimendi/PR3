@@ -2,6 +2,7 @@
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import javax.swing.*;
@@ -18,6 +19,7 @@ public class VentanaQuijote extends JFrame {
 
 	private JTextArea taTexto;
 	private JScrollPane spTexto;
+	
 	
 	public VentanaQuijote() {
 		setDefaultCloseOperation( JFrame.DISPOSE_ON_CLOSE );
@@ -45,15 +47,39 @@ public class VentanaQuijote extends JFrame {
 				muevePagina( (spTexto.getHeight()-20) );
 			}
 		});
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosed() {
+				
+			}
+		});
 	}
+	private ArrayList<Thread> hilosActivos = new ArrayList<>();
+	private Thread hiloActual;
 	
 	private void muevePagina( int pixelsVertical ) {
 		// TODO Cambiar este comportamiento de acuerdo a los comentarios de la cabecera de clase
-		Thread t = new Thread(new Runnable() {
+		
+	
+		hiloActual = new Thread(new Runnable() {
 			
+			
+				
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
+				//mirar si hay algun hilo funcionando y hasta qu eno soy el primero no me pongo a funcionar
+				
+				Thread yo = hiloActual;
+				hilosActivos.add(yo);
+				
+				while(hilosActivos.get(0) != yo) {
+					if(Interrupted()) return;
+					try {
+						Thread.sleep(10);
+					}catch(InterruptedException e) {
+					}
+				}
 				JScrollBar bVertical = spTexto.getVerticalScrollBar();
 				System.out.println( "Moviendo texto de " + bVertical.getValue() + " a " + (bVertical.getValue()+pixelsVertical) );
 				
@@ -66,14 +92,20 @@ public class VentanaQuijote extends JFrame {
 				}else {
 					for(int i = 0; i<Math.abs(pixelsVertical); i--) {
 						bVertical.setValue( bVertical.getValue() - 1 );
-
+						try {Thread.sleep(10);} catch(InterruptedException e) {
+							
+						}
 					}
 				}
+				hilosActivos.remove(0);
 			}
+			
+			
 		});
-				t.start();
+				hiloActual.start();
 		
 	}
+		
 	
 	private void cargaQuijote() {
 		try {

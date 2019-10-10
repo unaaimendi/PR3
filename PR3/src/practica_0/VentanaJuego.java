@@ -93,9 +93,10 @@ public class VentanaJuego extends JFrame {
 
 	public static void main(String[] args) {
 		VentanaJuego v = new VentanaJuego();
-		v.setVisible(true);
 		v.creaCoche( 150, 100 );
 		v.miCarro.setPiloto( "Peter Pettigrew" );
+		v.setVisible(true);
+
 		//no se ve el coche hasta que se pulsa el boton de giro
 		
 	}
